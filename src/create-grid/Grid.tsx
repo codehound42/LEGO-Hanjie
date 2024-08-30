@@ -7,8 +7,8 @@ interface Cell {
 }
 
 const Grid: React.FC = () => {
-  const [width, setWidth] = useState<number>(5);
-  const [height, setHeight] = useState<number>(5);
+  const [width, setWidth] = useState<number>(15);
+  const [height, setHeight] = useState<number>(15);
   const [cells, setCells] = useState<Cell[]>([]);
 
   useEffect(() => {
@@ -43,6 +43,35 @@ const Grid: React.FC = () => {
     );
   };
 
+  const handleReset = () => {
+    setCells(cells.map((cell) => ({ ...cell, color: "white" })));
+  };
+
+  const handleInvert = () => {
+    setCells(
+      cells.map((cell) => ({
+        ...cell,
+        color: cell.color === "white" ? "blue" : "white",
+      }))
+    );
+  };
+
+  const handleRandom = () => {
+    setCells(
+      cells.map((cell) => ({
+        ...cell,
+        color: Math.random() < 0.55 ? "blue" : "white",
+      }))
+    );
+  };
+
+  const handleDone = () => {
+    // Implement the logic for finalizing the grid
+    // This could involve generating a new table or other actions as needed
+    // For now, we'll just log the current state
+    console.log("Grid finalized:", cells);
+  };
+
   return (
     <div className="grid-container">
       <div className="input-container">
@@ -54,12 +83,18 @@ const Grid: React.FC = () => {
           Height:
           <input type="number" value={height} onChange={handleHeightChange} />
         </label>
+        <div className="button-container">
+          <button onClick={handleReset}>Reset</button>
+          <button onClick={handleInvert}>Invert</button>
+          <button onClick={handleRandom}>Scramble</button>
+          <button onClick={handleDone}>Done</button>
+        </div>
       </div>
       <div
         className="grid"
         style={{
-          gridTemplateColumns: `repeat(${width}, 20px)`,
-          gridTemplateRows: `repeat(${height}, 20px)`,
+          gridTemplateColumns: `repeat(${width}, 30px)`,
+          gridTemplateRows: `repeat(${height}, 30px)`,
         }}
       >
         {cells.map((cell) => (

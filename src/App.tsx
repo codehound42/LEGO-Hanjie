@@ -6,7 +6,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Grid App</h1>
+        <h1>LEGO Hanjie</h1>
       </header>
       <Grid />
     </div>

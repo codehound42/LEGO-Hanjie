@@ -19,8 +19,14 @@
 }
 
 .cell {
-  width: 20px;
+  width: 30px;
   height: 30px;
   border: 1px solid #ccc;
   cursor: pointer;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
