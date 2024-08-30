@@ -10,10 +10,14 @@ interface Cell {
 const EMPTY_COLOR = "white";
 const FILLED_COLOR = "#90AFC5";
 
+// Define cell size constant
+const CELL_SIZE = "30px";
+
 const Grid: React.FC = () => {
   const [width, setWidth] = useState<number>(15);
   const [height, setHeight] = useState<number>(15);
   const [cells, setCells] = useState<Cell[]>([]);
+  const [finalGrid, setFinalGrid] = useState<JSX.Element | null>(null);
 
   useEffect(() => {
     initializeGrid(width, height);
@@ -75,10 +79,102 @@ const Grid: React.FC = () => {
   };
 
   const handleDone = () => {
-    // Implement the logic for finalizing the grid
-    // This could involve generating a new table or other actions as needed
-    // For now, we'll just log the current state
-    console.log("Grid finalized:", cells);
+    const rows: number[][] = [];
+    const cols: number[][] = [];
+
+    // Calculate row numbers
+    for (let y = 0; y < height; y++) {
+      rows[y] = [];
+      let p = 0;
+      let enc = false;
+      for (let x = 0; x < width; x++) {
+        const pos = y * width + x;
+        if (cells[pos].color === FILLED_COLOR) {
+          if (rows[y][p] === undefined) {
+            rows[y][p] = 1;
+            enc = true;
+          } else {
+            rows[y][p]++;
+          }
+        } else if (enc) {
+          p++;
+          enc = false;
+        }
+      }
+    }
+
+    // Calculate column numbers
+    for (let x = 0; x < width; x++) {
+      cols[x] = [];
+      let p = 0;
+      let enc = false;
+      for (let y = 0; y < height; y++) {
+        const pos = y * width + x;
+        if (cells[pos].color === FILLED_COLOR) {
+          if (cols[x][p] === undefined) {
+            cols[x][p] = 1;
+            enc = true;
+          } else {
+            cols[x][p]++;
+          }
+        } else if (enc) {
+          p++;
+          enc = false;
+        }
+      }
+    }
+
+    // Generate the final table
+    const table = (
+      <table border={1}>
+        <thead>
+          <tr>
+            <th></th>
+            {cols.map((col, x) => (
+              <th
+                key={x}
+                style={x % 5 === 0 ? { borderLeft: "2px solid #000000" } : {}}
+              >
+                {col.map((num, i) => (
+                  <div key={i}>{num}</div>
+                ))}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, y) => (
+            <tr key={y}>
+              <th
+                style={
+                  y % 5 === 0
+                    ? { borderTop: "2px solid #000000", textAlign: "right" }
+                    : { textAlign: "right" }
+                }
+              >
+                {row.join(" ")}
+              </th>
+              {Array.from({ length: width }).map((_, x) => (
+                <td
+                  key={x}
+                  className={
+                    cells[y * width + x].color === FILLED_COLOR ? "filled" : ""
+                  }
+                  style={{
+                    borderLeft:
+                      x % 5 === 0 && x !== 0 ? "2px solid #000000" : "",
+                    borderTop:
+                      y % 5 === 0 && y !== 0 ? "2px solid #000000" : "",
+                  }}
+                ></td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+
+    setFinalGrid(table);
   };
 
   return (
@@ -96,14 +192,13 @@ const Grid: React.FC = () => {
           <button onClick={handleReset}>Reset</button>
           <button onClick={handleInvert}>Invert</button>
           <button onClick={handleRandom}>Scramble</button>
-          <button onClick={handleDone}>Done</button>
         </div>
       </div>
       <div
         className="grid"
         style={{
-          gridTemplateColumns: `repeat(${width}, 30px)`,
-          gridTemplateRows: `repeat(${height}, 30px)`,
+          gridTemplateColumns: `repeat(${width}, ${CELL_SIZE})`,
+          gridTemplateRows: `repeat(${height}, ${CELL_SIZE})`,
         }}
       >
         {cells.map((cell) => (
@@ -115,6 +210,8 @@ const Grid: React.FC = () => {
           />
         ))}
       </div>
+      <button onClick={handleDone}>Done</button>
+      {finalGrid && <div className="final-grid">{finalGrid}</div>}
     </div>
   );
 };
