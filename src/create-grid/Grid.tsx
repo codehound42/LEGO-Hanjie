@@ -6,6 +6,10 @@ interface Cell {
   color: string;
 }
 
+// Define color constants
+const EMPTY_COLOR = "white";
+const FILLED_COLOR = "#90AFC5";
+
 const Grid: React.FC = () => {
   const [width, setWidth] = useState<number>(15);
   const [height, setHeight] = useState<number>(15);
@@ -18,7 +22,7 @@ const Grid: React.FC = () => {
   const initializeGrid = (width: number, height: number) => {
     const newCells: Cell[] = [];
     for (let i = 0; i < width * height; i++) {
-      newCells.push({ id: i, color: "white" });
+      newCells.push({ id: i, color: EMPTY_COLOR });
     }
     setCells(newCells);
   };
@@ -37,21 +41,26 @@ const Grid: React.FC = () => {
     setCells(
       cells.map((cell) =>
         cell.id === id
-          ? { ...cell, color: cell.color === "white" ? "blue" : "white" }
+          ? {
+              ...cell,
+              color: cell.color === EMPTY_COLOR ? FILLED_COLOR : EMPTY_COLOR,
+            }
           : cell
       )
     );
   };
 
   const handleReset = () => {
-    setCells(cells.map((cell) => ({ ...cell, color: "white" })));
+    if (window.confirm("Are you sure you want to reset?")) {
+      setCells(cells.map((cell) => ({ ...cell, color: EMPTY_COLOR })));
+    }
   };
 
   const handleInvert = () => {
     setCells(
       cells.map((cell) => ({
         ...cell,
-        color: cell.color === "white" ? "blue" : "white",
+        color: cell.color === EMPTY_COLOR ? FILLED_COLOR : EMPTY_COLOR,
       }))
     );
   };
@@ -60,7 +69,7 @@ const Grid: React.FC = () => {
     setCells(
       cells.map((cell) => ({
         ...cell,
-        color: Math.random() < 0.55 ? "blue" : "white",
+        color: Math.random() < 0.55 ? FILLED_COLOR : EMPTY_COLOR,
       }))
     );
   };
