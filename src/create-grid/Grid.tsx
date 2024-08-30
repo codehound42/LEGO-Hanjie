@@ -160,7 +160,8 @@ const Grid: React.FC = () => {
 
     // Calculate the width of the left column based on the longest number sequence
     const leftColumnWidth =
-      Math.max(...rows.map((row) => row.join(" ").length)) * 10 + 20;
+      Math.max(...rows.map((row) => row.map(String).join(" ").length)) * 10 +
+      20;
 
     // Generate the final table
     const table = (
