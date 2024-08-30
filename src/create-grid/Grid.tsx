@@ -18,6 +18,8 @@ const Grid: React.FC = () => {
   const [height, setHeight] = useState<number>(15);
   const [cells, setCells] = useState<Cell[]>([]);
   const [finalGrid, setFinalGrid] = useState<JSX.Element | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragColor, setDragColor] = useState<string>(EMPTY_COLOR);
 
   useEffect(() => {
     initializeGrid(width, height);
@@ -41,17 +43,39 @@ const Grid: React.FC = () => {
     setHeight(newHeight);
   };
 
-  const handleCellClick = (id: number) => {
+  const handleMouseDown = (id: number, color: string) => {
+    setIsDragging(true);
+    const newColor = color === EMPTY_COLOR ? FILLED_COLOR : EMPTY_COLOR;
+    setDragColor(newColor);
     setCells(
       cells.map((cell) =>
         cell.id === id
           ? {
               ...cell,
-              color: cell.color === EMPTY_COLOR ? FILLED_COLOR : EMPTY_COLOR,
+              color: newColor,
             }
           : cell
       )
     );
+  };
+
+  const handleMouseEnter = (id: number) => {
+    if (isDragging) {
+      setCells(
+        cells.map((cell) =>
+          cell.id === id
+            ? {
+                ...cell,
+                color: dragColor,
+              }
+            : cell
+        )
+      );
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   const handleReset = () => {
@@ -165,9 +189,6 @@ const Grid: React.FC = () => {
               {Array.from({ length: width }).map((_, x) => (
                 <td
                   key={x}
-                  className={
-                    cells[y * width + x].color === FILLED_COLOR ? "filled" : ""
-                  }
                   style={{
                     borderLeft:
                       x % 5 === 0 && x !== 0 ? "2px solid #000000" : "",
@@ -186,7 +207,7 @@ const Grid: React.FC = () => {
   };
 
   return (
-    <div className="grid-container">
+    <div className="grid-container" onMouseUp={handleMouseUp}>
       <div className="input-container">
         <label>
           Width:
@@ -208,13 +229,15 @@ const Grid: React.FC = () => {
           gridTemplateColumns: `repeat(${width}, ${CELL_SIZE})`,
           gridTemplateRows: `repeat(${height}, ${CELL_SIZE})`,
         }}
+        onMouseLeave={handleMouseUp} // Ensure dragging stops when the mouse leaves the grid area
       >
         {cells.map((cell) => (
           <div
             key={cell.id}
             className="cell"
             style={{ backgroundColor: cell.color }}
-            onClick={() => handleCellClick(cell.id)}
+            onMouseDown={(e) => handleMouseDown(cell.id, cell.color)}
+            onMouseEnter={() => handleMouseEnter(cell.id)}
           />
         ))}
       </div>
