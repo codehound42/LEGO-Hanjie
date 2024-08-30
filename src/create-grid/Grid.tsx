@@ -217,11 +217,7 @@ const Grid: React.FC = () => {
   };
 
   return (
-    <div
-      className="grid-container"
-      onMouseUp={handleMouseUp}
-      onContextMenu={(e) => e.preventDefault()}
-    >
+    <div className="grid-container" onContextMenu={(e) => e.preventDefault()}>
       <div className="input-container">
         <label>
           Width:
@@ -243,6 +239,7 @@ const Grid: React.FC = () => {
           gridTemplateColumns: `repeat(${width}, ${CELL_SIZE})`,
           gridTemplateRows: `repeat(${height}, ${CELL_SIZE})`,
         }}
+        onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp} // Ensure dragging stops when the mouse leaves the grid area
       >
         {cells.map((cell) => (
