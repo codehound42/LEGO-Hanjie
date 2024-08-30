@@ -43,9 +43,19 @@ const Grid: React.FC = () => {
     setHeight(newHeight);
   };
 
-  const handleMouseDown = (id: number, color: string) => {
+  const handleMouseDown = (id: number, button: number) => {
+    let newColor;
+    if (button === 0) {
+      // Left click
+      newColor = FILLED_COLOR;
+    } else if (button === 2) {
+      // Right click
+      newColor = EMPTY_COLOR;
+    } else {
+      return;
+    }
+
     setIsDragging(true);
-    const newColor = color === EMPTY_COLOR ? FILLED_COLOR : EMPTY_COLOR;
     setDragColor(newColor);
     setCells(
       cells.map((cell) =>
@@ -207,7 +217,11 @@ const Grid: React.FC = () => {
   };
 
   return (
-    <div className="grid-container" onMouseUp={handleMouseUp}>
+    <div
+      className="grid-container"
+      onMouseUp={handleMouseUp}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <div className="input-container">
         <label>
           Width:
@@ -236,7 +250,7 @@ const Grid: React.FC = () => {
             key={cell.id}
             className="cell"
             style={{ backgroundColor: cell.color }}
-            onMouseDown={(e) => handleMouseDown(cell.id, cell.color)}
+            onMouseDown={(e) => handleMouseDown(cell.id, e.button)}
             onMouseEnter={() => handleMouseEnter(cell.id)}
           />
         ))}
