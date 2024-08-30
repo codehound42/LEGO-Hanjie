@@ -124,12 +124,16 @@ const Grid: React.FC = () => {
       }
     }
 
+    // Calculate the width of the left column based on the longest number sequence
+    const leftColumnWidth =
+      Math.max(...rows.map((row) => row.join(" ").length)) * 10 + 20;
+
     // Generate the final table
     const table = (
-      <table border={1}>
+      <table border="1px solid #000000">
         <thead>
           <tr>
-            <th></th>
+            <th style={{ width: `${leftColumnWidth}px` }}></th>
             {cols.map((col, x) => (
               <th
                 key={x}
@@ -148,8 +152,12 @@ const Grid: React.FC = () => {
               <th
                 style={
                   y % 5 === 0
-                    ? { borderTop: "2px solid #000000", textAlign: "right" }
-                    : { textAlign: "right" }
+                    ? {
+                        borderTop: "2px solid #000000",
+                        textAlign: "right",
+                        width: `${leftColumnWidth}px`,
+                      }
+                    : { textAlign: "right", width: `${leftColumnWidth}px` }
                 }
               >
                 {row.join(" ")}
